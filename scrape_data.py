@@ -236,19 +236,24 @@ def main():
         ath_2019 = po10.search(first_name=leg_2019[0],surname=leg_2019[1],club=leg_2019[2]).index[0]       
         url2014 = root_url + 'athletes/profile.aspx?athleteid={0}'.format(ath_2014)
         url2019 = root_url + 'athletes/profile.aspx?athleteid={0}'.format(ath_2019)
-        ath2014 = po10.athleteDetails(url2014)[2]
-        ath2019 = po10.athleteDetails(url2019)[2]
+        ath2014a = po10.athleteDetails(url2014)[2]
+        ath2019a = po10.athleteDetails(url2019)[2]
         if leg_2014[3] == 'l':
             event = '10K'
+            event2 = '10000'
         else:
             event = '5K'
-        if not event in ath2014.index:
+            event2 = '5000'
+        if not event in ath2014a.index:
             sbs2014.append(np.nan)
         else:
-            ath2014 = ath2014.loc[event]
+            ath2014 = ath2014a.loc[event]
             sb2014 = ath2014['2014']
             if not isinstance(sb2014,str):
-                if isinstance(ath2014['2015'],str):
+                if event2 in ath2014a.index and isinstance(ath2014a.loc[event2]['2014'],str):
+                    sb2014 = ath2014a.loc[event2]['2014']
+                    
+                elif isinstance(ath2014['2015'],str):
                     sb2014 = ath2014['2015']
                 elif isinstance(ath2014['2013'],str):
                     sb2014 = ath2014['2013']
@@ -257,14 +262,16 @@ def main():
             pbs2014.append(ath2014['PB'])
             sbs2014.append(sb2014)
 
-        if not event in ath2019.index:
+        if not event in ath2019a.index:
             sbs2019.append('15:48') # JWS
-            pbs2019.append('15:48')
+            pbs2019.append('15:26')
         else:
-            ath2019 = ath2019.loc[event]
+            ath2019 = ath2019a.loc[event]
             sb2019 = ath2019['2019']
             if not isinstance(sb2019,str):
-                if isinstance(ath2019['2020'],str):
+                if event2 in ath2019a.index and isinstance(ath2019a.loc[event2]['2019'],str):
+                    sb2019 = ath2019a.loc[event2]['2019']
+                elif isinstance(ath2019['2020'],str):
                     sb2019 = ath2019['2020']
                 elif isinstance(ath2019['2018'],str):
                     sb2019 = ath2019['2018']
@@ -291,6 +298,7 @@ def main():
     print(sbs2014)
     print(sbs2019)
     print(pbs2014)
+    print(pbs2019)
     sbelapsed2014 = dt(minutes=0,seconds=0); sbtottime2014 = []
     sbelapsed2019 = dt(minutes=0,seconds=0); sbtottime2019 = []
     print(sbelapsed2014)
@@ -299,19 +307,19 @@ def main():
         sbelapsed2014 = sbelapsed2014 + legtime2014
         legtime2019 = dt(minutes=int(sbleg2019[0:2]),seconds=int(sbleg2019[3:5]))
         sbelapsed2019 = sbelapsed2019 + legtime2019
-        sbtottime2014.append(sbelapsed2014)
-        sbtottime2019.append(sbelapsed2019)
+        sbtottime2014.append(str(sbelapsed2014))
+        sbtottime2019.append(str(sbelapsed2019))
     
     pbelapsed2014 = dt(minutes=0,seconds=0); pbtottime2014 = []
     pbelapsed2019 = dt(minutes=0,seconds=0); pbtottime2019 = []
     
     for pbleg2014, pbleg2019 in zip(pbs2014, pbs2019):
-        legtime2014 = dt(minutes=int(pbleg2014[0:2]),seconds=int(pbleg2014[-2:]))
-        pbelapsed2014 = sbelapsed2014 + legtime2014
-        legtime2019 = dt(minutes=int(pbleg2019[0:2]),seconds=int(pbleg2019[-2:]))
+        legtime2014 = dt(minutes=int(pbleg2014[0:2]),seconds=int(pbleg2014[3:5]))
+        pbelapsed2014 = pbelapsed2014 + legtime2014
+        legtime2019 = dt(minutes=int(pbleg2019[0:2]),seconds=int(pbleg2019[3:5]))
         pbelapsed2019 = pbelapsed2019 + legtime2019
-        pbtottime2014.append(pbelapsed2014)
-        pbtottime2019.append(pbelapsed2019)
+        pbtottime2014.append(str(pbelapsed2014))
+        pbtottime2019.append(str(pbelapsed2019))
         
     print(sbtottime2014)
     print(sbtottime2019)
